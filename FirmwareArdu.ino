@@ -86,7 +86,21 @@ void loop() {
         }  
       }
          buttonState0[i]=buttonState[i];
-    }    
+    }   
+
+     //Check game started
+       //Check serial port
+    if(Serial.available()>0)//Si el Arduino recibe datos a través del puerto serie
+    {
+      char game = Serial.read(); //Los almacena en la variable "dato"
+      for(int i=0;i<4;i++)
+      {
+        if(buttonCode[i]==game)
+        {
+           digitalWrite(ledPin[i],HIGH);
+        }
+      }
+    }
   }    
 
   delay(150);
