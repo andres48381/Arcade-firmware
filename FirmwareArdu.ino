@@ -12,6 +12,34 @@ int active_game=0;
 int buttonState[] = {0,0,0,0};         // variable for reading the pushbutton status
 int buttonState0[] = {0,0,0,0}; 
 
+int a=35,b=36,c=37,d=38,e=39,f=40,g=41;//Pines de salida para led's
+int aux=1;
+
+void numero(int num)//Representar números en el DISPLAY
+{
+  if(num==1 || num==4)digitalWrite(a,LOW);//Números {2,3,5,6} --> Segmento "a" del display encendido
+  else digitalWrite(a,HIGH);//CONTROL SEGMENTO: A    
+  
+  if(num==5||num==6)digitalWrite(b,LOW);
+  else digitalWrite(b,HIGH);//CONTROL SEGMENTO: B  
+  
+  if(num==2)digitalWrite(c,LOW);
+  else digitalWrite(c,HIGH);//CONTROL SEGMENTO: C  
+  
+  if(num==1||num==4||num==7||num==9)digitalWrite(d,LOW);
+  else digitalWrite(d,HIGH);//CONTROL SEGMENTO: D  
+  
+  if(num==2||num==6||num==8)digitalWrite(e,HIGH);
+  else digitalWrite(e,LOW);//CONTROL SEGMENTO: E  
+  
+  if(num==4||num==5||num==6||num==8||num==9)digitalWrite(f,HIGH);
+  else digitalWrite(f,LOW);//CONTROL SEGMENTO: F  
+  
+  if(num==1 || num==7)digitalWrite(g,LOW);
+  else digitalWrite(g,HIGH);//CONTROL SEGMENTO: G  
+
+ }
+
 void waitingSystem()
 {
   int led=cont_wait/3; //3xCiclos de espera
@@ -65,6 +93,16 @@ void setup() {
     pinMode(ledPin[i], OUTPUT);
   }
 
+  pinMode(a,OUTPUT);//LED's del DISPLAY 7 Segmentos
+  pinMode(b,OUTPUT);
+  pinMode(c,OUTPUT);
+  pinMode(d,OUTPUT);
+  pinMode(e,OUTPUT);
+  pinMode(f,OUTPUT);
+  pinMode(g,OUTPUT);
+
+
+
    // pinMode(13, OUTPUT);
   //Etapa espera conexion
  // etapa_wait=true;
@@ -76,6 +114,8 @@ void setup() {
 }
 
 void loop() {
+
+  numero(aux++);
 
   //ESPERANDO CONEXION
   if(etapa==1)
@@ -149,5 +189,5 @@ void loop() {
       etapa=2;
   }
 
-    delay(150);
+    delay(1000);
 }
