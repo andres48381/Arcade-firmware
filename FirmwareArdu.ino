@@ -115,7 +115,7 @@ void setup() {
 
 void loop() {
 
-  numero(aux++);
+ // numero(aux++);
 
   //ESPERANDO CONEXION
   if(etapa==1)
@@ -138,20 +138,31 @@ void loop() {
            buttonState0[i]=buttonState[i];
       }   
   
-       //Check game started
-         //Check serial port
+      //Check game started
+      //Check serial port
       if(Serial.available()>0)//Si el Arduino recibe datos a través del puerto serie
       {
-        char game = Serial.read(); //Los almacena en la variable "dato"
-        for(int i=0;i<4;i++)
-        {
-          if(buttonCode[i]==game)
-          {
-             active_game=ledPin[i];
-             clearLed();
-             etapa=3;
+        //char data = Serial.read(); //Los almacena en la variable "dato"
+        
+        //Battrey info
+       // if(data=='b')
+       // {
+          int level_battery = Serial.read(); //Los almacena en la variable "dato"
+          numero(level_battery);
+       // }
+      //  else
+      //  {
+          for(int i=0;i<4;i++)
+          {            
+            char game;//=data;            
+            if(buttonCode[i]==game)
+            {
+              active_game=ledPin[i];
+              clearLed();
+              etapa=3;
+            }
           }
-        }
+    //     }  
       }
   }
   else if(etapa==3)
@@ -189,5 +200,5 @@ void loop() {
       etapa=2;
   }
 
-    delay(1000);
+  //  delay(1000);
 }
