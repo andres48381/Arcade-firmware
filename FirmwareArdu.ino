@@ -13,6 +13,7 @@ int buttonState[] = {0,0,0,0};         // variable for reading the pushbutton st
 int buttonState0[] = {0,0,0,0}; 
 
 int a=35,b=36,c=37,d=38,e=39,f=40,g=41;//Pines de salida para led's
+int pin_charge=50;
 int aux=1;
 
 void numero(int num)//Representar números en el DISPLAY
@@ -38,6 +39,16 @@ void numero(int num)//Representar números en el DISPLAY
   if(num==1 || num==7)digitalWrite(g,LOW);
   else digitalWrite(g,HIGH);//CONTROL SEGMENTO: G  
 
+  if(num==10)
+  {
+    digitalWrite(a,LOW);//CONTROL SEGMENTO: A  
+    digitalWrite(b,LOW);//CONTROL SEGMENTO: B 
+    digitalWrite(c,HIGH);//CONTROL SEGMENTO: C 
+    digitalWrite(d,HIGH);//CONTROL SEGMENTO: D 
+    digitalWrite(e,HIGH);//CONTROL SEGMENTO: E  
+    digitalWrite(f,HIGH);//CONTROL SEGMENTO: F 
+    digitalWrite(g,HIGH);//CONTROL SEGMENTO: G  
+  }
  }
 
 void waitingSystem()
@@ -60,12 +71,12 @@ void waitingSystem()
   //Check serial port
   if(Serial.available()>0)//Si el Arduino recibe datos a través del puerto serie
   {
-    byte dato = Serial.read(); //Los almacena en la variable "dato"
-    if(dato==65)  //Si recibe una "A" (en ASCII "65")
+    String dato = Serial.readStringUntil('/'); //Los almacena en la variable "dato"
+    if(dato.equals("A"))  //Si recibe una "A" 
     {
       etapa=2;
       cont_wait=0; //Reset
-      //digitalWrite(13,HIGH);
+      digitalWrite(13,HIGH);
       //Reset
       clearLed();
     }
@@ -101,9 +112,9 @@ void setup() {
   pinMode(f,OUTPUT);
   pinMode(g,OUTPUT);
 
+  pinMode(pin_charge,OUTPUT);
 
-
-   // pinMode(13, OUTPUT);
+   pinMode(13, OUTPUT);
   //Etapa espera conexion
  // etapa_wait=true;
 
@@ -142,16 +153,18 @@ void loop() {
       //Check serial port
       if(Serial.available()>0)//Si el Arduino recibe datos a través del puerto serie
       {
-        //char data = Serial.read(); //Los almacena en la variable "dato"
+        String data = Serial.readStringUntil('/'); //Los almacena en la variable "dato"
         
         //Battrey info
-       // if(data=='b')
-       // {
-          int level_battery = Serial.read(); //Los almacena en la variable "dato"
-          numero(level_battery);
-       // }
-      //  else
-      //  {
+        if(data.equals("b"))
+        {
+          String level_battery = Serial.readStringUntil('/'); 
+          String status_battery = Serial.readStringUntil('/'); 
+          numero(level_battery.toInt());
+          digitalWrite(pin_charge,status_battery.equals("1")?HIGH:LOW);
+        }
+        else
+        {
           for(int i=0;i<4;i++)
           {            
             char game;//=data;            
@@ -162,7 +175,7 @@ void loop() {
               etapa=3;
             }
           }
-    //     }  
+         }  
       }
   }
   else if(etapa==3)
