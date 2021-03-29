@@ -1,3 +1,5 @@
+const String version="0.1.0";
+
 // constants won't change. They're used here to set pin numbers:
 const int buttonPin[]={5,6,7,8};
 const char buttonCode[]={'p','c','b','m'};
@@ -8,9 +10,16 @@ int cont_blink=0;
 int etapa=0; //1: ESPERA CONEXION 2:READY 3:PROCESANDO 4:ACTIVO
 int active_game=0;
 
+//Sonido
+const int soundPin[]={50,51};
+const char soundCode[]={'o','i'}; //o: decrease i:increase
+
 // variables will change:
-int buttonState[] = {0,0,0,0};         // variable for reading the pushbutton status
+int buttonState[] = {0,0,0,0};         // variable for reading the game pushbutton status
 int buttonState0[] = {0,0,0,0}; 
+
+int soundState[] = {0,0};         // variable for reading the sound pushbutton status
+int soundState0[] = {0,0}; 
 
 int a=35,b=36,c=37,d=38,e=39,f=40,g=41;//Pines de salida para led's
 int pin_charge=50;
@@ -104,6 +113,11 @@ void setup() {
     pinMode(ledPin[i], OUTPUT);
   }
 
+  for(int i=0;i<2;i++)
+  {
+    pinMode(soundPin[i], INPUT);
+  }
+
   pinMode(a,OUTPUT);//LED's del DISPLAY 7 Segmentos
   pinMode(b,OUTPUT);
   pinMode(c,OUTPUT);
@@ -135,7 +149,7 @@ void loop() {
   }
   else if(etapa==2)
   {  
-      //LECTURA DE PULSADORES
+      //LECTURA DE PULSADORES JUEGO
       for(int i=0;i<4;i++)
       {
          buttonState[i] = digitalRead(buttonPin[i]); 
@@ -177,6 +191,20 @@ void loop() {
           }
          }  
       }
+
+      //LECTURA DE PULSADORES SONIDO
+      for(int i=0;i<2;i++)
+      {
+         soundState[i] = digitalRead(soundPin[i]); 
+         
+        if (soundState[i] == HIGH) {
+    
+          if(soundState0[i]==0){
+            Serial.println(soundCode[i]);
+          }  
+        }
+           soundState0[i]=soundState[i];
+      }   
   }
   else if(etapa==3)
   { 
