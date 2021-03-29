@@ -11,7 +11,7 @@ int etapa=0; //1: ESPERA CONEXION 2:READY 3:PROCESANDO 4:ACTIVO
 int active_game=0;
 
 //Sonido
-const int soundPin[]={50,51};
+const int soundPin[]={52,53};
 const char soundCode[]={'o','i'}; //o: decrease i:increase
 
 // variables will change:
