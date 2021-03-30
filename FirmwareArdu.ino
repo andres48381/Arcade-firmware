@@ -85,7 +85,7 @@ void waitingSystem()
     {
       etapa=2;
       cont_wait=0; //Reset
-      digitalWrite(13,HIGH);
+//      digitalWrite(13,HIGH);
       //Reset
       clearLed();
     }
@@ -179,14 +179,16 @@ void loop() {
         }
         else
         {
+          String state_game = Serial.readStringUntil('/'); 
           for(int i=0;i<4;i++)
           {            
-            char game;//=data;            
-            if(buttonCode[i]==game)
+//           char game=data;            
+            if(data.equals(String(buttonCode[i])))
             {
               active_game=ledPin[i];
               clearLed();
               etapa=3;
+              digitalWrite(13,HIGH);
             }
           }
          }  
@@ -212,16 +214,14 @@ void loop() {
       blinkLed(active_game);
   
       if(Serial.available()>0)//Si el Arduino recibe datos a través del puerto serie
-      {
-        String game = Serial.readString(); //Los almacena en la variable "dato"
-  
-        for(int i=0;i<4;i++)
+      {     
+        String game = Serial.readStringUntil('/'); //Los almacena en la variable "dato"  
+
+        if(game.equals("NONE"))
         {
-          if(game.equals("NONE"))
-          {
-            active_game=0;
-          }
-        }
+          active_game=0;
+          digitalWrite(13,LOW);
+        }       
   
         etapa=4;
       }
@@ -241,5 +241,5 @@ void loop() {
       etapa=2;
   }
 
-  //  delay(1000);
+    delay(150);
 }
