@@ -1,4 +1,4 @@
-const String version="0.1.0";
+const String version="0.1.1";
 
 // constants won't change. They're used here to set pin numbers:
 const int buttonPin[]={5,6,7,8};
@@ -13,6 +13,11 @@ int active_game=0;
 //Sonido
 const int soundPin[]={52,53};
 const char soundCode[]={'o','i'}; //o: decrease i:increase
+int speakerPin = 9;
+ 
+int numTones = 10;
+int tones[] = {261, 277, 294, 311, 330, 349, 370, 392, 415, 440};
+//            mid C  C#   D    D#   E    F    F#   G    G#   A
 
 // variables will change:
 int buttonState[] = {0,0,0,0};         // variable for reading the game pushbutton status
@@ -136,6 +141,14 @@ void setup() {
   Serial.begin(9600);
 
   etapa=1;
+
+ //Melodia de incializacion
+  for (int i = 0; i < numTones; i++)
+  {
+    tone(speakerPin, tones[i]);
+    delay(100);
+  }
+  noTone(speakerPin);
 }
 
 void loop() {
