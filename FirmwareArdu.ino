@@ -183,7 +183,7 @@ void loop() {
         String data = Serial.readStringUntil('/'); //Los almacena en la variable "dato"
         
         //Battrey info
-        if(data.equals("b"))
+        if(data.equals("B"))
         {
           String level_battery = Serial.readStringUntil('/'); 
           String status_battery = Serial.readStringUntil('/'); 
