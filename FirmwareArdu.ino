@@ -1,4 +1,7 @@
-const String version="0.1.1";
+const String version="0.2.0";
+#include <LiquidCrystal_I2C.h>
+
+//LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 
 // constants won't change. They're used here to set pin numbers:
 const int buttonPin[]={5,6,7,8};
@@ -26,44 +29,7 @@ int buttonState0[] = {0,0,0,0};
 int soundState[] = {0,0};         // variable for reading the sound pushbutton status
 int soundState0[] = {0,0}; 
 
-int a=35,b=36,c=37,d=38,e=39,f=40,g=41;//Pines de salida para led's
-int pin_charge=50;
 int aux=1;
-
-void numero(int num)//Representar números en el DISPLAY
-{
-  if(num==1 || num==4)digitalWrite(a,LOW);//Números {2,3,5,6} --> Segmento "a" del display encendido
-  else digitalWrite(a,HIGH);//CONTROL SEGMENTO: A    
-  
-  if(num==5||num==6)digitalWrite(b,LOW);
-  else digitalWrite(b,HIGH);//CONTROL SEGMENTO: B  
-  
-  if(num==2)digitalWrite(c,LOW);
-  else digitalWrite(c,HIGH);//CONTROL SEGMENTO: C  
-  
-  if(num==1||num==4||num==7||num==9)digitalWrite(d,LOW);
-  else digitalWrite(d,HIGH);//CONTROL SEGMENTO: D  
-  
-  if(num==2||num==6||num==8)digitalWrite(e,HIGH);
-  else digitalWrite(e,LOW);//CONTROL SEGMENTO: E  
-  
-  if(num==4||num==5||num==6||num==8||num==9)digitalWrite(f,HIGH);
-  else digitalWrite(f,LOW);//CONTROL SEGMENTO: F  
-  
-  if(num==1 || num==7)digitalWrite(g,LOW);
-  else digitalWrite(g,HIGH);//CONTROL SEGMENTO: G  
-
-  if(num==10)
-  {
-    digitalWrite(a,LOW);//CONTROL SEGMENTO: A  
-    digitalWrite(b,LOW);//CONTROL SEGMENTO: B 
-    digitalWrite(c,HIGH);//CONTROL SEGMENTO: C 
-    digitalWrite(d,HIGH);//CONTROL SEGMENTO: D 
-    digitalWrite(e,HIGH);//CONTROL SEGMENTO: E  
-    digitalWrite(f,HIGH);//CONTROL SEGMENTO: F 
-    digitalWrite(g,HIGH);//CONTROL SEGMENTO: G  
-  }
- }
 
 void waitingSystem()
 {
@@ -123,16 +89,6 @@ void setup() {
     pinMode(soundPin[i], INPUT);
   }
 
-  pinMode(a,OUTPUT);//LED's del DISPLAY 7 Segmentos
-  pinMode(b,OUTPUT);
-  pinMode(c,OUTPUT);
-  pinMode(d,OUTPUT);
-  pinMode(e,OUTPUT);
-  pinMode(f,OUTPUT);
-  pinMode(g,OUTPUT);
-
-  pinMode(pin_charge,OUTPUT);
-
    pinMode(13, OUTPUT);
   //Etapa espera conexion
  // etapa_wait=true;
@@ -149,6 +105,15 @@ void setup() {
     delay(100);
   }
   noTone(speakerPin);
+
+  //LCD
+ // lcd.init();                      // initialize the lcd 
+  // Print a message to the LCD.
+ // lcd.backlight();
+ // lcd.setCursor(0,0);
+ // lcd.print("BAT:78 VOL:40");
+ // lcd.setCursor(0,1);
+ // lcd.print("DEMO MODE"); 
 }
 
 void loop() {
@@ -187,8 +152,8 @@ void loop() {
         {
           String level_battery = Serial.readStringUntil('/'); 
           String status_battery = Serial.readStringUntil('/'); 
-          numero(level_battery.toInt());
-          digitalWrite(pin_charge,status_battery.equals("1")?HIGH:LOW);
+//          numero(level_battery.toInt());
+ //         digitalWrite(pin_charge,status_battery.equals("1")?HIGH:LOW);
         }
         else
         {
