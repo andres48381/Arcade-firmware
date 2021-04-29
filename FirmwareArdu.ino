@@ -1,7 +1,7 @@
 const String version="0.2.0";
 #include <LiquidCrystal_I2C.h>
 
-//LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 
 // constants won't change. They're used here to set pin numbers:
 const int buttonPin[]={5,6,7,8};
@@ -30,7 +30,29 @@ int soundState[] = {0,0};         // variable for reading the sound pushbutton s
 int soundState0[] = {0,0}; 
 
 int aux=1;
-
+void setLCD(String m1,String m2)
+{
+  //LCD
+  lcd.init();                      // initialize the lcd 
+//  Print a message to the LCD.
+  lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print(m1);
+  lcd.setCursor(0,1);
+  lcd.print(m2); 
+}
+void setLCD(String m)
+{
+  //LCD
+  lcd.init();                      // initialize the lcd 
+//  Print a message to the LCD.
+  lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print("BAT:XX VOL:XX");
+  lcd.setCursor(0,1);
+  lcd.print(m); 
+}
+  
 void waitingSystem()
 {
   int led=cont_wait/3; //3xCiclos de espera
@@ -59,6 +81,7 @@ void waitingSystem()
 //      digitalWrite(13,HIGH);
       //Reset
       clearLed();
+      setLCD("PULSA JUEGO"); 
     }
   }
   
@@ -105,15 +128,7 @@ void setup() {
     delay(100);
   }
   noTone(speakerPin);
-
-  //LCD
- // lcd.init();                      // initialize the lcd 
-  // Print a message to the LCD.
- // lcd.backlight();
- // lcd.setCursor(0,0);
- // lcd.print("BAT:78 VOL:40");
- // lcd.setCursor(0,1);
- // lcd.print("DEMO MODE"); 
+  setLCD("   INICIANDO","CONSOLA MARCOS"); 
 }
 
 void loop() {
@@ -123,7 +138,7 @@ void loop() {
   //ESPERANDO CONEXION
   if(etapa==1)
   {
-    waitingSystem();  
+    waitingSystem(); 
   }
   else if(etapa==2)
   {  
@@ -167,6 +182,13 @@ void loop() {
               clearLed();
               etapa=3;
               digitalWrite(13,HIGH);
+              for(int i=0;i<4;i++)
+              {
+                if(active_game==ledPin[i])
+                {
+                  setLCD("INICIANDO...",games[i]);
+                }
+              }
             }
           }
          }  
@@ -184,7 +206,7 @@ void loop() {
           }  
         }
            soundState0[i]=soundState[i];
-      }   
+      } 
   }
   else if(etapa==3)
   { 
@@ -210,10 +232,19 @@ void loop() {
       if(active_game==0)
       {
         clearLed();
+        setLCD("PULSA JUEGO"); 
       }
       else
       {
          digitalWrite(active_game,HIGH);
+
+         for(int i=0;i<4;i++)
+         {
+            if(active_game==ledPin[i])
+            {
+               setLCD(games[i]);
+            }
+         }
       }
   
       etapa=2;
