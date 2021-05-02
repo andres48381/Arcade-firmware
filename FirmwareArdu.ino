@@ -1,12 +1,12 @@
-const String version="0.2.0";
+const String version="0.3.0";
 #include <LiquidCrystal_I2C.h>
 
 LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 
 // constants won't change. They're used here to set pin numbers:
 const int buttonPin[]={5,6,7,8};
-const char buttonCode[]={'p','c','b','m'};
-const String games[]={"PANG","MARVEL","BUBBLE","MARIO"};
+const char buttonCode[]={'p','c','r','m'};
+const String games[]={"PANG","MARVEL","RAYMAN","MARIO"};
 const int ledPin[]={25,26,11,12};
 int cont_wait=0;
 int cont_blink=0;
