@@ -46,9 +46,6 @@ void setLCD(String m1,String m2)
 void setLCD(String m)
 {
   //LCD
- // lcd.init();                      // initialize the lcd 
-//  Print a message to the LCD.
-  //lcd.backlight();
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("BAT:"+level_battery+status_battery+" VOL:"+level_sound);
@@ -165,11 +162,45 @@ void loop() {
       if(Serial.available()>0)//Si el Arduino recibe datos a través del puerto serie
       {
         //String data = Serial.readStringUntil('/'); //Los almacena en la variable "dato"
-        int data = Serial.read(); //Los almacena en la variable "dato"
-        level_sound = String(data); 
-        setLCD("PULSA JUEGO"); 
+        char id = Serial.read();
+
+        if(id=='S')
+        {
+          int sound = Serial.read();
+          level_sound = String(sound); 
+          setLCD("PULSA JUEGO"); 
+        }
+        else if(id=='B')
+        {
+          level_battery = String(Serial.read());
+          //status_battery = Serial.readStringUntil('/'); 
+          setLCD("PULSA JUEGO"); 
+        }
+        else
+        {
+          char data = Serial.read();
+          for(int i=0;i<4;i++)
+          {            
+            //char game=data;            
+            if(data==buttonCode[i])
+            {
+              active_game=ledPin[i];
+              clearLed();
+              etapa=3;
+              //digitalWrite(13,HIGH);
+              for(int i=0;i<4;i++)
+              {
+                if(active_game==ledPin[i])
+                {
+                  setLCD("INICIANDO...",games[i]);
+                }
+              }
+            }
+          }
+         }  
+/*
         //Battrey info
-       /* if(data.equals("B"))
+        if(data.equals("B"))
         {
           level_battery = Serial.readStringUntil('/'); 
           status_battery = Serial.readStringUntil('/'); 
