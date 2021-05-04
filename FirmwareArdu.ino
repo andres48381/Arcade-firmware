@@ -12,11 +12,15 @@ int cont_wait=0;
 int cont_blink=0;
 int etapa=0; //1: ESPERA CONEXION 2:READY 3:PROCESANDO 4:ACTIVO
 int active_game=0;
+//Battery
+String level_battery = "XX"; 
+String status_battery = ""; 
 
 //Sonido
 const int soundPin[]={52,53};
 const char soundCode[]={'o','i'}; //o: decrease i:increase
 int speakerPin = 9;
+String level_sound="10";
  
 int numTones = 10;
 int tones[] = {261, 277, 294, 311, 330, 349, 370, 392, 415, 440};
@@ -33,9 +37,7 @@ int aux=1;
 void setLCD(String m1,String m2)
 {
   //LCD
-  lcd.init();                      // initialize the lcd 
-//  Print a message to the LCD.
-  lcd.backlight();
+  lcd.clear();
   lcd.setCursor(0,0);
   lcd.print(m1);
   lcd.setCursor(0,1);
@@ -44,11 +46,12 @@ void setLCD(String m1,String m2)
 void setLCD(String m)
 {
   //LCD
-  lcd.init();                      // initialize the lcd 
+ // lcd.init();                      // initialize the lcd 
 //  Print a message to the LCD.
-  lcd.backlight();
+  //lcd.backlight();
+  lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("BAT:XX VOL:XX");
+  lcd.print("BAT:"+level_battery+status_battery+" VOL:"+level_sound);
   lcd.setCursor(0,1);
   lcd.print(m); 
 }
@@ -128,12 +131,13 @@ void setup() {
     delay(100);
   }
   noTone(speakerPin);
+
+  lcd.init();                      // initialize the lcd 
+  lcd.backlight();
   setLCD("   INICIANDO","CONSOLA MARCOS"); 
 }
 
 void loop() {
-
- // numero(aux++);
 
   //ESPERANDO CONEXION
   if(etapa==1)
@@ -160,28 +164,35 @@ void loop() {
       //Check serial port
       if(Serial.available()>0)//Si el Arduino recibe datos a través del puerto serie
       {
-        String data = Serial.readStringUntil('/'); //Los almacena en la variable "dato"
-        
+        //String data = Serial.readStringUntil('/'); //Los almacena en la variable "dato"
+        int data = Serial.read(); //Los almacena en la variable "dato"
+        level_sound = String(data); 
+        setLCD("PULSA JUEGO"); 
         //Battrey info
-        if(data.equals("B"))
+       /* if(data.equals("B"))
         {
-          String level_battery = Serial.readStringUntil('/'); 
-          String status_battery = Serial.readStringUntil('/'); 
-//          numero(level_battery.toInt());
- //         digitalWrite(pin_charge,status_battery.equals("1")?HIGH:LOW);
+          level_battery = Serial.readStringUntil('/'); 
+          status_battery = Serial.readStringUntil('/'); 
+          setLCD("PULSA JUEGO"); 
+        }
+        //Sound info
+        else if(data.equals("S"))
+        {
+          level_sound = Serial.readStringUntil('/'); 
+          setLCD("PULSA JUEGO"); 
         }
         else
         {
           String state_game = Serial.readStringUntil('/'); 
           for(int i=0;i<4;i++)
           {            
-//           char game=data;            
+            //char game=data;            
             if(data.equals(String(buttonCode[i])))
             {
               active_game=ledPin[i];
               clearLed();
               etapa=3;
-              digitalWrite(13,HIGH);
+              //digitalWrite(13,HIGH);
               for(int i=0;i<4;i++)
               {
                 if(active_game==ledPin[i])
@@ -191,7 +202,7 @@ void loop() {
               }
             }
           }
-         }  
+         }  */
       }
 
       //LECTURA DE PULSADORES SONIDO
@@ -201,7 +212,7 @@ void loop() {
          
         if (soundState[i] == HIGH) {
     
-          if(soundState0[i]==0){
+          if(soundState0[i]== LOW){
             Serial.println(soundCode[i]);
           }  
         }
@@ -250,5 +261,5 @@ void loop() {
       etapa=2;
   }
 
-    delay(150);
+    delay(50);
 }
