@@ -6,7 +6,7 @@ LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars
 // constants won't change. They're used here to set pin numbers:
 const int buttonPin[]={5,6,7,8};
 const char buttonCode[]={'p','c','r','m'};
-const String games[]={"PANG","MARVEL","RAYMAN","MARIO"};
+const String games[]={"PANG","MARVEL","RAYMAN","SUPER MARIO"};
 const int ledPin[]={25,26,11,12};
 int cont_wait=0;
 int cont_blink=0;
@@ -14,7 +14,7 @@ int etapa=0; //1: ESPERA CONEXION 2:READY 3:PROCESANDO 4:ACTIVO
 int active_game=0;
 //Battery
 String level_battery = "XX"; 
-String status_battery = ""; 
+char status_battery='x'; 
 
 //Sonido
 const int soundPin[]={52,53};
@@ -48,7 +48,7 @@ void setLCD(String m)
   //LCD
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("BAT:"+level_battery+status_battery+" VOL:"+level_sound);
+  lcd.print("BAT:"+level_battery+status_battery+"  VOL:"+level_sound);
   lcd.setCursor(0,1);
   lcd.print(m); 
 }
@@ -131,7 +131,7 @@ void setup() {
 
   lcd.init();                      // initialize the lcd 
   lcd.backlight();
-  setLCD("   INICIANDO","CONSOLA MARCOS"); 
+  setLCD("   INICIANDO"," MARCOS ARCADE"); 
 }
 
 void loop() {
@@ -163,18 +163,35 @@ void loop() {
       {
         //String data = Serial.readStringUntil('/'); //Los almacena en la variable "dato"
         char id = Serial.read();
-
+        String mess="  PULSA JUEGO";
+        
         if(id=='S')
         {
           int sound = Serial.read();
           level_sound = String(sound); 
-          setLCD("PULSA JUEGO"); 
+
+          for(int i=0;i<4;i++)
+          {
+            if(active_game==ledPin[i])
+            {
+               mess=games[i];
+            }
+          }
+          setLCD(mess); 
         }
         else if(id=='B')
         {
           level_battery = String(Serial.read());
+          status_battery = Serial.read();
           //status_battery = Serial.readStringUntil('/'); 
-          setLCD("PULSA JUEGO"); 
+          for(int i=0;i<4;i++)
+          {
+            if(active_game==ledPin[i])
+            {
+               mess=games[i];
+            }
+          }
+          setLCD(mess);
         }
         else
         {
@@ -192,7 +209,7 @@ void loop() {
               {
                 if(active_game==ledPin[i])
                 {
-                  setLCD("INICIANDO...",games[i]);
+                  setLCD("CONFIGURANDO...",games[i]);
                 }
               }
             }
@@ -274,7 +291,7 @@ void loop() {
       if(active_game==0)
       {
         clearLed();
-        setLCD("PULSA JUEGO"); 
+        setLCD("  PULSA JUEGO"); 
       }
       else
       {
@@ -292,5 +309,5 @@ void loop() {
       etapa=2;
   }
 
-    delay(50);
+    delay(150);
 }
