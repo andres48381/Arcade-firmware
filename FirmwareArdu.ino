@@ -180,10 +180,20 @@ void loop() {
           setLCD(mess); 
         }
         else if(id=='B')
-        {
-          level_battery = String(Serial.read());
-          status_battery = Serial.read();
-          //status_battery = Serial.readStringUntil('/'); 
+        {         
+          int i_level_battery = Serial.read();
+          char c_status_battery = Serial.read();
+
+          if(i_level_battery>0 && i_level_battery<=100)
+          {
+            level_battery = String(i_level_battery);
+          }
+
+          if(c_status_battery=='-' || c_status_battery=='+')
+          {
+            status_battery = c_status_battery;
+          }
+          
           for(int i=0;i<4;i++)
           {
             if(active_game==ledPin[i])
