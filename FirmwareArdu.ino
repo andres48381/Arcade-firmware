@@ -48,7 +48,7 @@ void setLCD(String m)
   //LCD
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("BAT:"+level_battery+status_battery+"  VOL:"+level_sound);
+  lcd.print("BAT:"+level_battery+status_battery+" VOL:"+level_sound);
   lcd.setCursor(0,1);
   lcd.print(m); 
 }
@@ -168,7 +168,10 @@ void loop() {
         if(id=='S')
         {
           int sound = Serial.read();
-          level_sound = String(sound); 
+          if(sound>=0 && sound<=100) 
+          {
+            level_sound = String(sound); 
+          }
 
           for(int i=0;i<4;i++)
           {
