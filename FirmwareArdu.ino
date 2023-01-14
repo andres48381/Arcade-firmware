@@ -1,7 +1,7 @@
 const String version="0.3.0";
 #include <LiquidCrystal_I2C.h>
 
-LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 
 // constants won't change. They're used here to set pin numbers:
 const int buttonPin[]={5,6,7,8};
@@ -78,8 +78,6 @@ void waitingSystem()
     {
       etapa=2;
       cont_wait=0; //Reset
-//      digitalWrite(13,HIGH);
-      //Reset
       clearLed();
       setLCD("PULSA JUEGO"); 
     }
@@ -111,10 +109,6 @@ void setup() {
   {
     pinMode(soundPin[i], INPUT);
   }
-
-   pinMode(13, OUTPUT);
-  //Etapa espera conexion
- // etapa_wait=true;
 
   //Puerto de comunicacion en 9600 baudios
   Serial.begin(9600);
@@ -217,7 +211,7 @@ void loop() {
               active_game=ledPin[i];
               clearLed();
               etapa=3;
-              //digitalWrite(13,HIGH);
+             
               for(int i=0;i<4;i++)
               {
                 if(active_game==ledPin[i])
@@ -228,42 +222,6 @@ void loop() {
             }
           }
          }  
-/*
-        //Battrey info
-        if(data.equals("B"))
-        {
-          level_battery = Serial.readStringUntil('/'); 
-          status_battery = Serial.readStringUntil('/'); 
-          setLCD("PULSA JUEGO"); 
-        }
-        //Sound info
-        else if(data.equals("S"))
-        {
-          level_sound = Serial.readStringUntil('/'); 
-          setLCD("PULSA JUEGO"); 
-        }
-        else
-        {
-          String state_game = Serial.readStringUntil('/'); 
-          for(int i=0;i<4;i++)
-          {            
-            //char game=data;            
-            if(data.equals(String(buttonCode[i])))
-            {
-              active_game=ledPin[i];
-              clearLed();
-              etapa=3;
-              //digitalWrite(13,HIGH);
-              for(int i=0;i<4;i++)
-              {
-                if(active_game==ledPin[i])
-                {
-                  setLCD("INICIANDO...",games[i]);
-                }
-              }
-            }
-          }
-         }  */
       }
 
       //LECTURA DE PULSADORES SONIDO
@@ -292,7 +250,6 @@ void loop() {
         if(game.equals("NONE"))
         {
           active_game=0;
-          digitalWrite(13,LOW);
         }       
   
         etapa=4;
