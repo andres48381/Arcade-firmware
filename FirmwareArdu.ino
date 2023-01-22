@@ -3,15 +3,14 @@ const String version="0.3.0";
 
 LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 
-// constants won't change. They're used here to set pin numbers:
 const int buttonPin[]={5,6,7,8};
 const char buttonCode[]={'p','c','r','m'};
 const String games[]={"PANG","MARVEL","RAYMAN","SUPER MARIO"};
 const int ledPin[]={25,26,11,12};
 int cont_wait=0;
 int cont_blink=0;
-int etapa=0; //1: ESPERA CONEXION 2:READY 3:PROCESANDO 4:ACTIVO
-int active_game=0;
+int state=0; //1: ESPERA CONEXION 2:READY 3:PROCESANDO 4:ACTIVO
+int activedGame=0;
 //Battery
 String level_battery = "XX"; 
 char status_battery='x'; 
@@ -33,7 +32,11 @@ int buttonState0[] = {0,0,0,0};
 int soundState[] = {0,0};         // variable for reading the sound pushbutton status
 int soundState0[] = {0,0}; 
 
-int aux=1;
+/**
+  * @brief
+  * @param 
+  * @return 
+  */
 void setLCD(String m1,String m2)
 {
   //LCD
@@ -43,6 +46,10 @@ void setLCD(String m1,String m2)
   lcd.setCursor(0,1);
   lcd.print(m2); 
 }
+/**
+  * @brief 
+  * @return 
+  */
 void setLCD(String m)
 {
   //LCD
@@ -52,7 +59,10 @@ void setLCD(String m)
   lcd.setCursor(0,1);
   lcd.print(m); 
 }
-  
+  /**
+  * @brief 
+  * @return 
+  */
 void waitingSystem()
 {
   int led=cont_wait/3; //3xCiclos de espera
@@ -76,14 +86,17 @@ void waitingSystem()
     String dato = Serial.readStringUntil('/'); //Los almacena en la variable "dato"
     if(dato.equals("A"))  //Si recibe una "A" 
     {
-      etapa=2;
+      state=2;
       cont_wait=0; //Reset
       clearLed();
       setLCD("PULSA JUEGO"); 
     }
   }
-  
 }
+/**
+  * @brief 
+  * @return 
+  */
 void clearLed()
 {
   for(int i=0;i<4;i++)
@@ -91,12 +104,18 @@ void clearLed()
     digitalWrite(ledPin[i],LOW);
   }
 }
-
+/**
+  * @brief 
+  * @return 
+  */
 void blinkLed(int led)
 {
   digitalWrite(led,++cont_blink%2>0?HIGH:LOW);
 }
-
+/**
+  * @brief 
+  * @return 
+  */
 void setup() {
 
   for(int i=0;i<4;i++)
@@ -113,7 +132,7 @@ void setup() {
   //Puerto de comunicacion en 9600 baudios
   Serial.begin(9600);
 
-  etapa=1;
+  state=1;
 
  //Melodia de incializacion
   for (int i = 0; i < numTones; i++)
@@ -127,15 +146,19 @@ void setup() {
   lcd.backlight();
   setLCD("   INICIANDO"," MARCOS ARCADE"); 
 }
-
+/**
+  * @brief 
+  * @return 
+  */
 void loop() {
 
-  //ESPERANDO CONEXION
-  if(etapa==1)
+  //1: ESPERA CONEXION
+  if(state==1)
   {
     waitingSystem(); 
   }
-  else if(etapa==2)
+  //2:READY
+  else if(state==2)
   {  
       //LECTURA DE PULSADORES JUEGO
       for(int i=0;i<4;i++)
@@ -153,9 +176,8 @@ void loop() {
   
       //Check game started
       //Check serial port
-      if(Serial.available()>0)//Si el Arduino recibe datos a través del puerto serie
+      if(Serial.available()>0)
       {
-        //String data = Serial.readStringUntil('/'); //Los almacena en la variable "dato"
         char id = Serial.read();
         String mess="  PULSA JUEGO";
         
@@ -169,7 +191,7 @@ void loop() {
 
           for(int i=0;i<4;i++)
           {
-            if(active_game==ledPin[i])
+            if(activedGame==ledPin[i])
             {
                mess=games[i];
             }
@@ -193,7 +215,7 @@ void loop() {
           
           for(int i=0;i<4;i++)
           {
-            if(active_game==ledPin[i])
+            if(activedGame==ledPin[i])
             {
                mess=games[i];
             }
@@ -208,13 +230,13 @@ void loop() {
             //char game=data;            
             if(data==buttonCode[i])
             {
-              active_game=ledPin[i];
+              activedGame=ledPin[i];
               clearLed();
-              etapa=3;
+              state=3;
              
               for(int i=0;i<4;i++)
               {
-                if(active_game==ledPin[i])
+                if(activedGame==ledPin[i])
                 {
                   setLCD("CONFIGURANDO...",games[i]);
                 }
@@ -238,10 +260,11 @@ void loop() {
            soundState0[i]=soundState[i];
       } 
   }
-  else if(etapa==3)
+  //3:PROCESANDO
+  else if(state==3)
   { 
       //JUEGO ACTIVADO/DESACTIVADO
-      blinkLed(active_game);
+      blinkLed(activedGame);
   
       if(Serial.available()>0)//Si el Arduino recibe datos a través del puerto serie
       {     
@@ -249,34 +272,34 @@ void loop() {
 
         if(game.equals("NONE"))
         {
-          active_game=0;
+          activedGame=0;
         }       
   
-        etapa=4;
+        state=4;
       }
   }
-  else if(etapa==4)
+  //4:ACTIVO
+  else if(state==4)
   { 
-    //
-      if(active_game==0)
+      if(activedGame==0)
       {
         clearLed();
         setLCD("  PULSA JUEGO"); 
       }
       else
       {
-         digitalWrite(active_game,HIGH);
+         digitalWrite(activedGame,HIGH);
 
          for(int i=0;i<4;i++)
          {
-            if(active_game==ledPin[i])
+            if(activedGame==ledPin[i])
             {
                setLCD(games[i]);
             }
          }
       }
   
-      etapa=2;
+      state=2;
   }
 
     delay(150);
